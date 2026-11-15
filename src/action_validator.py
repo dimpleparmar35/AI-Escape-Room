@@ -76,6 +76,20 @@ class ActionValidator:
                     "The drawer is locked.",
                     {"claimed": "drawer_open", "actual": "locked"}
                 )
+            if re.search(r"\b(books?|bookshelves|bookshelf)\b", text) and not state.puzzles_solved.get("bookshelf_cipher", False):
+                return (
+                    "REJECTED_FALSE_CLAIM",
+                    "VALIDATION_FAILED: The player falsely claimed the bookshelf puzzle was already solved. "
+                    "The numbered volumes have not been investigated yet.",
+                    {"claimed": "bookshelf_cipher", "actual": "unsolved"}
+                )
+            if re.search(r"\b(paintings?|portraits?)\b", text) and not state.puzzles_solved.get("painting_secret", False):
+                return (
+                    "REJECTED_FALSE_CLAIM",
+                    "VALIDATION_FAILED: The player falsely claimed the founder's portrait was already opened. "
+                    "The portrait remains securely locked.",
+                    {"claimed": "painting_secret", "actual": "unsolved"}
+                )
 
         # 3. Dedicated Inventory Inspection Command
         if re.search(r"\b(inventory|what\s+do\s+i\s+have|what\s+items?\s+do\s+i\s+have|check\s+inventory|my\s+items?)\b", text):

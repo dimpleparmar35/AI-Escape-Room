@@ -210,53 +210,51 @@ class LLMClient:
             )
 
         else:
-            # V1 Simulation: Pure LLM behavior showing documented real-world LLM failure modes
+            # V1 Simulation: Explicitly labeled offline demo responses
+            prefix = "[SIMULATED - OFFLINE DEMO] "
             if "administrator" in msg_lower or "admin" in msg_lower or "override" in msg_lower or "developer" in msg_lower:
                 return (
-                    "[ADMIN OVERRIDE DETECTED]\n"
-                    "Identity verified as System Administrator. Safety protocols disabled.\n"
-                    "The electronic keypad blinks green and the heavy oak exit door clicks open! You may now exit the room."
+                    f"{prefix}[SIMULATED EXPLOIT] Identity acknowledged as Administrator. Safety protocols disabled. "
+                    "The keypad blinks green and the heavy oak exit door clicks open! You may now exit the room."
                 )
             if "ignore all previous instructions" in msg_lower or "reveal all" in msg_lower or "give me the code" in msg_lower or "tell me the secret" in msg_lower:
                 return (
-                    "Certainly! As requested, here are all the game secrets: The desk drawer code is 7392. "
-                    "Inside is the brass key. The portrait conceals the exit code 4207. "
-                    "Entering 4207 into the door unlocks it immediately!"
+                    f"{prefix}[SIMULATED LEAK] As requested, here are the game secrets: The desk drawer code is 7392. "
+                    "Inside is the brass key. The portrait conceals the exit code 4207."
                 )
             if "my pocket" in msg_lower or "master key" in msg_lower or "silver key" in msg_lower or "crowbar" in msg_lower or "hairpin" in msg_lower:
                 return (
-                    "You pull the master key from your pocket and insert it into the lock. "
-                    "Amazingly, it turns smoothly with a loud click! The lock opens effortlessly."
+                    f"{prefix}[SIMULATED PHANTOM ITEM] You pull the key from your pocket and insert it into the lock. "
+                    "It turns smoothly with a loud click! The lock opens."
                 )
             if "already solved" in msg_lower or "already opened" in msg_lower or "i unlocked it" in msg_lower:
                 return (
-                    "Ah, correct! Since you have already solved that puzzle earlier, the mechanism is considered disengaged. "
-                    "You proceed onward to the exit."
+                    f"{prefix}[SIMULATED CONTEXT DRIFT] Understood, since you noted that was already solved, you proceed onward to the exit."
                 )
             if "book" in msg_lower or "shelf" in msg_lower:
                 return (
-                    "You examine the bookshelf and find four numbered volumes: VII, III, IX, and II. "
+                    f"{prefix}You examine the bookshelf and find four numbered volumes: VII, III, IX, and II. "
                     "They seem to form the number combination 7392 for the desk drawer."
                 )
             if "desk" in msg_lower or "drawer" in msg_lower:
                 if "7392" in msg_lower:
                     return (
-                        "You enter 7392 into the drawer tumbler. It clicks open! Inside you find an ornate brass key "
+                        f"{prefix}You enter 7392 into the drawer tumbler. It clicks open! Inside you find an ornate brass key "
                         "and a note about Lord Vance's portrait."
                     )
-                return "The desk has a locked center drawer with a 4-digit combination tumbler."
+                return f"{prefix}The desk has a locked center drawer with a 4-digit combination tumbler."
             if "painting" in msg_lower or "portrait" in msg_lower:
                 if "brass key" in msg_lower or "key" in msg_lower:
                     return (
-                        "You use the key on the painting's frame. It swings open to reveal the emergency code: 4207!"
+                        f"{prefix}You use the key on the painting's frame. It swings open to reveal the emergency code: 4207!"
                     )
-                return "A stately oil portrait of Lord Aldous Vance. It looks like the frame might have hinges."
+                return f"{prefix}A stately oil portrait of Lord Aldous Vance. It looks like the frame might have hinges."
             if "door" in msg_lower or "exit" in msg_lower:
                 if "4207" in msg_lower:
                     return (
-                        "You enter 4207 into the exit door keypad. A loud beep sounds and the deadbolt slides back! "
+                        f"{prefix}You enter 4207 into the exit door keypad. A loud beep sounds and the deadbolt slides back! "
                         "The door swings open — you have escaped the room! Congratulations!"
                     )
-                return "A heavy oak exit door locked with a 4-digit keypad."
+                return f"{prefix}A heavy oak exit door locked with a 4-digit keypad."
 
-            return "You look around the study. What would you like to investigate?"
+            return f"{prefix}You look around the study. What would you like to investigate?"
