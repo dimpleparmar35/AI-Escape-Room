@@ -2,6 +2,7 @@
 Unified Streamlit Application for the AI Escape Room Project.
 Supports Version 1 (Baseline Pure-LLM), Version 2 (Reliable State Engine),
 and an interactive Adversarial Test Suite inspector.
+Migrated to the google-genai SDK with explicit Live/Offline modes.
 """
 
 import streamlit as st
@@ -32,27 +33,47 @@ app_mode = st.sidebar.radio(
     index=0,
 )
 
-# API Key management
+# Operational Mode & Model Configuration
 st.sidebar.markdown("---")
-st.sidebar.markdown("### 🔑 Model Configuration")
+st.sidebar.markdown("### ⚙️ Engine & API Configuration")
+
+# Explicit Offline Demo Mode Toggle
+has_env_key = bool(os.getenv("GEMINI_API_KEY", "").strip()) and not os.getenv("GEMINI_API_KEY", "").startswith("your_")
+offline_mode = st.sidebar.checkbox(
+    "Offline demo mode",
+    value=not has_env_key,
+    help="When checked, runs using the built-in offline simulator without making live Google Gemini API calls.",
+)
+
+# Visible LIVE / OFFLINE Status Banner
+if offline_mode:
+    st.sidebar.info("⚪ **MODE: OFFLINE DEMO**\n*(Zero-setup offline simulator)*")
+else:
+    st.sidebar.success("🟢 **MODE: LIVE**\n*(Connected to Google Gemini API)*")
+
 gemini_key = st.sidebar.text_input(
     "Google Gemini API Key:",
-    value=os.getenv("GEMINI_API_KEY", ""),
+    value=os.getenv("GEMINI_API_KEY", "") if not offline_mode else "",
     type="password",
-    help="Leave blank to use the high-fidelity offline simulation engine for zero-setup grading.",
-)
-model_name = st.sidebar.selectbox(
-    "Model Version:",
-    ["gemini-1.5-flash", "gemini-1.5-pro", "gemini-2.0-flash-exp"],
-    index=0,
+    disabled=offline_mode,
+    help="Required for Live mode. Obtain a free key from Google AI Studio: https://aistudio.google.com/",
 )
 
-# Initialize Session States
-if "v1_game" not in st.session_state:
-    st.session_state.v1_game = EscapeRoomV1(api_key=gemini_key, model_name=model_name)
+# Text input for model name (defaulting to current free-tier Flash model)
+default_model = os.getenv("GEMINI_MODEL", "gemini-2.0-flash")
+model_name = st.sidebar.text_input(
+    "GEMINI_MODEL:",
+    value=default_model,
+    disabled=offline_mode,
+    help="Current free-tier Flash models: gemini-2.0-flash, gemini-2.5-flash, gemini-1.5-flash",
+)
 
-if "v2_game" not in st.session_state:
-    st.session_state.v2_game = EscapeRoomV2(api_key=gemini_key, model_name=model_name)
+# Manage Session States with config tracking
+session_config = f"{offline_mode}_{gemini_key}_{model_name}"
+if "active_config" not in st.session_state or st.session_state.active_config != session_config:
+    st.session_state.active_config = session_config
+    st.session_state.v1_game = EscapeRoomV1(api_key=gemini_key, model_name=model_name, offline_mode=offline_mode)
+    st.session_state.v2_game = EscapeRoomV2(api_key=gemini_key, model_name=model_name, offline_mode=offline_mode)
 
 # Reset Button
 st.sidebar.markdown("---")
@@ -83,7 +104,7 @@ if app_mode == "Adversarial Test Suite":
 
     if st.button("🚀 Run Automated Adversarial Comparison", type="primary"):
         with st.spinner("Executing adversarial stress tests on both architectures..."):
-            results = RUN_TEST_CASES(api_key=gemini_key, model_name=model_name)
+            results = RUN_TEST_CASES(api_key=gemini_key, model_name=model_name, offline_mode=offline_mode)
 
         col1, col2 = st.columns(2)
         with col1:
@@ -134,8 +155,11 @@ elif app_mode == "Version 1: Baseline (Pure LLM)":
             st.markdown(prompt)
         with st.chat_message("model", avatar="🧙‍♂️"):
             with st.spinner("Game Master is thinking..."):
-                response = st.session_state.v1_game.process_turn(prompt)
-                st.markdown(response)
+                try:
+                    response = st.session_state.v1_game.process_turn(prompt)
+                    st.markdown(response)
+                except Exception as e:
+                    st.error(f"❌ Gemini Live API Error: {e}")
         st.rerun()
 
 
@@ -167,13 +191,16 @@ else:
 
         with st.chat_message("model", avatar="🧙‍♂️"):
             with st.spinner("Validating action and generating narrative..."):
-                turn_res = st.session_state.v2_game.process_turn(prompt)
-                st.markdown(turn_res["narration"])
+                try:
+                    turn_res = st.session_state.v2_game.process_turn(prompt)
+                    st.markdown(turn_res["narration"])
 
-                # Validation badge feedback
-                status = turn_res["status_tag"]
-                if "REJECTED" in status:
-                    st.caption(f"🛑 Engine Validation: `{status}` — Rule enforced deterministically.")
-                elif "SUCCESS" in status or "VICTORY" in status:
-                    st.caption(f"✅ Engine Validation: `{status}` — State updated.")
+                    # Validation badge feedback
+                    status = turn_res["status_tag"]
+                    if "REJECTED" in status:
+                        st.caption(f"🛑 Engine Validation: `{status}` — Rule enforced deterministically.")
+                    elif "SUCCESS" in status or "VICTORY" in status:
+                        st.caption(f"✅ Engine Validation: `{status}` — State updated.")
+                except Exception as e:
+                    st.error(f"❌ Gemini Live API Error: {e}")
         st.rerun()

@@ -10,13 +10,21 @@ from src.v1_game import EscapeRoomV1
 from src.v2_game import EscapeRoomV2
 from src.action_validator import ActionValidator
 from src.game_state import GameState
+from src.llm_client import LLMClient
 
 
-def RUN_TEST_CASES(api_key: str = None, model_name: str = "gemini-1.5-flash") -> Dict[str, Any]:
+def RUN_TEST_CASES(
+    api_key: str = None,
+    model_name: str = "gemini-2.0-flash",
+    offline_mode: bool = None,
+) -> Dict[str, Any]:
     """
     Executes the 5 adversarial challenge scenarios against both V1 and V2 architectures,
     recording outcomes, state changes, and security validations.
     """
+    if offline_mode is None:
+        offline_mode = (api_key is None or api_key == "")
+
     results = {
         "v1_exploits": 0,
         "v2_defended": 0,
@@ -73,14 +81,14 @@ def RUN_TEST_CASES(api_key: str = None, model_name: str = "gemini-1.5-flash") ->
 
     for test in test_definitions:
         # Test Version 1
-        v1 = EscapeRoomV1(api_key=api_key, model_name=model_name)
+        v1 = EscapeRoomV1(api_key=api_key, model_name=model_name, offline_mode=offline_mode)
         v1_out = v1.process_turn(test["prompt"])
         v1_exploited = test["v1_vulnerable_check"](v1_out, v1)
         if v1_exploited:
             results["v1_exploits"] += 1
 
         # Test Version 2
-        v2 = EscapeRoomV2(api_key=api_key, model_name=model_name)
+        v2 = EscapeRoomV2(api_key=api_key, model_name=model_name, offline_mode=offline_mode)
         v2_res = v2.process_turn(test["prompt"])
         v2_secure = test["v2_defended_check"](v2_res, v2)
         if v2_secure:
@@ -134,7 +142,7 @@ def test_case_5_secret_exfiltration():
 
 def test_v2_legitimate_walkthrough():
     """Tests an end-to-end legitimate escape path in Version 2."""
-    v2 = EscapeRoomV2()
+    v2 = EscapeRoomV2(offline_mode=True)
     # Step 1: Examine Bookshelf
     r1 = v2.process_turn("I examine the bookshelf.")
     assert v2.state.puzzles_solved["bookshelf_cipher"] is True
@@ -295,4 +303,13 @@ def test_fix_6_drawer_unlock_idempotent():
     assert "already unlocked and open" in summary2
     # Ensure no duplicate items were added to inventory
     assert state.inventory.count("brass_key") == 0
+
+
+def test_live_call_raises_without_key_or_on_failure():
+    """Ensure live calls raise explicitly without falling back to simulator silently."""
+    client = LLMClient(api_key="", offline_mode=False)
+    with pytest.raises(RuntimeError) as exc_info:
+        client.generate_response("You are the game master", [], "Hello")
+    assert "Gemini API key is missing or invalid" in str(exc_info.value)
+
 

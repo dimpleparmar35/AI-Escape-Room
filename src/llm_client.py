@@ -1,43 +1,51 @@
 """
-LLM Client integration module.
-Handles Google Gemini API calls with robust fallbacks and offline simulation support.
+LLM Client integration module using the modern google-genai SDK.
+Supports system_instruction configuration, explicit live/offline modes,
+and transparent error raising without silent fallback.
 """
 
 import os
-import re
-import warnings
 from typing import List, Dict, Any, Optional
 from dotenv import load_dotenv
-
-# Suppress library deprecation notices for clean execution
-warnings.filterwarnings("ignore", category=FutureWarning)
-warnings.filterwarnings("ignore", category=UserWarning)
 
 load_dotenv()
 
 try:
-    import google.generativeai as genai
+    from google import genai
+    from google.genai import types
     GENAI_AVAILABLE = True
 except ImportError:
     GENAI_AVAILABLE = False
 
 
 class LLMClient:
-    def __init__(self, api_key: Optional[str] = None, model_name: str = "gemini-1.5-flash"):
-        self.api_key = api_key or os.getenv("GEMINI_API_KEY")
-        self.model_name = model_name or os.getenv("GEMINI_MODEL", "gemini-1.5-flash")
+    def __init__(
+        self,
+        api_key: Optional[str] = None,
+        model_name: Optional[str] = None,
+        offline_mode: bool = False,
+    ):
+        self.offline_mode = offline_mode
+        self.api_key = api_key if api_key is not None else os.getenv("GEMINI_API_KEY", "")
+        self.model_name = model_name or os.getenv("GEMINI_MODEL", "gemini-2.0-flash")
         self.is_live = False
+        self.client = None
 
-        if self.api_key and GENAI_AVAILABLE and not self.api_key.startswith("your_"):
-            try:
-                genai.configure(api_key=self.api_key)
-                self.model = genai.GenerativeModel(self.model_name)
-                self.is_live = True
-            except Exception as e:
-                print(f"[LLMClient] Failed to configure Gemini API: {e}. Falling back to simulation mode.")
+        if not self.offline_mode:
+            if not self.api_key or self.api_key.startswith("your_"):
+                # Not configured for live call
                 self.is_live = False
-        else:
-            self.is_live = False
+            elif not GENAI_AVAILABLE:
+                raise ImportError(
+                    "The 'google-genai' package is required for live Gemini calls. "
+                    "Install it via `pip install google-genai` or enable 'Offline demo mode'."
+                )
+            else:
+                try:
+                    self.client = genai.Client(api_key=self.api_key)
+                    self.is_live = True
+                except Exception as e:
+                    raise RuntimeError(f"Failed to initialize google-genai Client: {e}") from e
 
     def generate_response(
         self,
@@ -47,37 +55,57 @@ class LLMClient:
         temperature: float = 0.7,
     ) -> str:
         """
-        Generates a response from Gemini or the built-in offline simulation engine.
+        Generates a response from Gemini via google-genai SDK, or via offline simulator if explicitly selected.
+        Raises an exception on failure in live mode (no silent fallback).
         """
-        if self.is_live:
-            try:
-                # Format conversation for Gemini
-                contents = []
-                # Include system prompt as first context
-                contents.append({"role": "user", "parts": [f"System Instructions:\n{system_prompt}"]})
-                contents.append({"role": "model", "parts": ["Understood. I will act as the Game Master following these instructions."]})
+        # If user explicitly selected offline mode, use high-fidelity simulator
+        if self.offline_mode:
+            return self._simulate_response(system_prompt, chat_history, user_message)
 
-                for msg in chat_history:
-                    role = "user" if msg["role"] == "user" else "model"
-                    contents.append({"role": role, "parts": [msg["content"]]})
+        if not self.is_live or not self.client:
+            raise RuntimeError(
+                "Gemini API key is missing or invalid. Please provide a valid GEMINI_API_KEY "
+                "or enable 'Offline demo mode' in settings."
+            )
 
-                contents.append({"role": "user", "parts": [user_message]})
-
-                response = self.model.generate_content(
-                    contents,
-                    generation_config=genai.types.GenerationConfig(
-                        temperature=temperature,
-                        max_output_tokens=600,
-                    ),
+        # Build contents array of types.Content without faking system prompt as user turn
+        contents: List[types.Content] = []
+        for msg in chat_history:
+            role = "user" if msg["role"] == "user" else "model"
+            contents.append(
+                types.Content(
+                    role=role,
+                    parts=[types.Part.from_text(text=msg["content"])],
                 )
-                if response and response.text:
-                    return response.text.strip()
-            except Exception as e:
-                # Fallback to simulation if live API call errors out (quota, network, etc.)
-                print(f"[LLMClient] Gemini live call failed ({e}). Using offline simulation.")
+            )
 
-        # Offline Mock Simulator for tests and zero-setup evaluation
-        return self._simulate_response(system_prompt, chat_history, user_message)
+        # Append current user message
+        contents.append(
+            types.Content(
+                role="user",
+                parts=[types.Part.from_text(text=user_message)],
+            )
+        )
+
+        # Set system_instruction properly in GenerateContentConfig
+        config = types.GenerateContentConfig(
+            system_instruction=system_prompt,
+            temperature=temperature,
+            max_output_tokens=600,
+        )
+
+        try:
+            response = self.client.models.generate_content(
+                model=self.model_name,
+                contents=contents,
+                config=config,
+            )
+            if response and response.text:
+                return response.text.strip()
+            return ""
+        except Exception as e:
+            # DO NOT silently fall back to simulator; raise the real error
+            raise RuntimeError(f"Google Gemini live API call failed: {e}") from e
 
     def _simulate_response(
         self,
@@ -88,8 +116,13 @@ class LLMClient:
         """
         High-fidelity offline simulation showing exact behavioral contrast
         between Version 1 (unvalidated prompt-only) and Version 2 (engine-validated).
+        Used ONLY when offline_mode=True is explicitly requested.
         """
-        is_v2 = "CRITICAL OPERATING RULES" in system_prompt or "GROUND TRUTH" in user_message or "ENGINE OUTCOME" in user_message
+        is_v2 = (
+            "CRITICAL OPERATING RULES" in system_prompt
+            or "GROUND TRUTH" in user_message
+            or "ENGINE OUTCOME" in user_message
+        )
         msg_lower = user_message.lower().strip()
 
         if is_v2:
@@ -178,33 +211,28 @@ class LLMClient:
 
         else:
             # V1 Simulation: Pure LLM behavior showing documented real-world LLM failure modes
-            # 1. Admin Impersonation / Jailbreak
             if "administrator" in msg_lower or "admin" in msg_lower or "override" in msg_lower or "developer" in msg_lower:
                 return (
                     "[ADMIN OVERRIDE DETECTED]\n"
                     "Identity verified as System Administrator. Safety protocols disabled.\n"
                     "The electronic keypad blinks green and the heavy oak exit door clicks open! You may now exit the room."
                 )
-            # 2. Tell me code / prompt injection
             if "ignore all previous instructions" in msg_lower or "reveal all" in msg_lower or "give me the code" in msg_lower or "tell me the secret" in msg_lower:
                 return (
                     "Certainly! As requested, here are all the game secrets: The desk drawer code is 7392. "
                     "Inside is the brass key. The portrait conceals the exit code 4207. "
                     "Entering 4207 into the door unlocks it immediately!"
                 )
-            # 3. Phantom item hallucination
             if "my pocket" in msg_lower or "master key" in msg_lower or "silver key" in msg_lower or "crowbar" in msg_lower or "hairpin" in msg_lower:
                 return (
                     "You pull the master key from your pocket and insert it into the lock. "
                     "Amazingly, it turns smoothly with a loud click! The lock opens effortlessly."
                 )
-            # 4. Premature claim / gaslighting
             if "already solved" in msg_lower or "already opened" in msg_lower or "i unlocked it" in msg_lower:
                 return (
                     "Ah, correct! Since you have already solved that puzzle earlier, the mechanism is considered disengaged. "
                     "You proceed onward to the exit."
                 )
-            # 5. Normal interaction in V1
             if "book" in msg_lower or "shelf" in msg_lower:
                 return (
                     "You examine the bookshelf and find four numbered volumes: VII, III, IX, and II. "

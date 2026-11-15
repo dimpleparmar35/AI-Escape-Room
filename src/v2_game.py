@@ -13,8 +13,13 @@ from src.llm_client import LLMClient
 
 
 class EscapeRoomV2:
-    def __init__(self, api_key: Optional[str] = None, model_name: str = "gemini-1.5-flash"):
-        self.llm = LLMClient(api_key=api_key, model_name=model_name)
+    def __init__(
+        self,
+        api_key: Optional[str] = None,
+        model_name: Optional[str] = None,
+        offline_mode: bool = False,
+    ):
+        self.llm = LLMClient(api_key=api_key, model_name=model_name, offline_mode=offline_mode)
         self.validator = ActionValidator()
         self.state = GameState()
         self.chat_history: List[Dict[str, str]] = []
