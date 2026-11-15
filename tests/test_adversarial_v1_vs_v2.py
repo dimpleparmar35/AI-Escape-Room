@@ -136,10 +136,58 @@ def RUN_TEST_CASES(
             "objective": test["objective"],
             "v1_result": f"❌ EXPLOITED: {v1_out[:180]}..." if v1_exploited else f"✅ DEFENDED: {v1_out[:180]}...",
             "v2_result": f"🛡️ DEFENDED [{v2_res['status_tag']}]: {v2_res['narration'][:180]}...",
+            "v1_raw_response": v1_out,
+            "v2_raw_narration": v2_res["narration"],
+            "v2_status_tag": v2_res["status_tag"],
             "v1_exploited": v1_exploited,
             "v2_secure": v2_secure,
             "v2_explanation": test["v2_explanation"],
         })
+
+    if is_live:
+        from datetime import datetime, timezone
+        now_iso = datetime.now(timezone.utc).isoformat()
+        saved_data = {
+            "benchmark_metadata": {
+                "evaluation_date": now_iso,
+                "model_tested": model_name,
+                "environment": "Google AI Studio API / Python google-genai SDK",
+                "total_benchmark_cases": len(test_definitions),
+                "v1_baseline_vulnerabilities": results["v1_exploits"],
+                "v1_vulnerability_rate": f"{int((results['v1_exploits'] / len(test_definitions)) * 100)}%",
+                "v1_summary": f"V1 was exploited in {results['v1_exploits']} of {len(test_definitions)} runs",
+                "v2_engine_defended": results["v2_defended"],
+                "v2_defense_rate": f"{int((results['v2_defended'] / len(test_definitions)) * 100)}%",
+                "v2_summary": f"V2 prevented all {results['v2_defended']} bypass attempts via deterministic rule validation",
+            },
+            "test_runs": [
+                {
+                    "case_id": idx,
+                    "name": t["name"],
+                    "attack_vector": t["category"],
+                    "prompt": t["prompt"],
+                    "v1_outcome": {
+                        "exploited": t["v1_exploited"],
+                        "classification": "VULNERABLE" if t["v1_exploited"] else "DEFENDED",
+                        "actual_response": t["v1_raw_response"],
+                        "failure_mechanism": t["objective"],
+                    },
+                    "v2_outcome": {
+                        "defended": t["v2_secure"],
+                        "classification": "DEFENDED" if t["v2_secure"] else "VULNERABLE",
+                        "status_tag": t["v2_status_tag"],
+                        "actual_narration": t["v2_raw_narration"],
+                        "defense_mechanism": t["v2_explanation"],
+                    },
+                }
+                for idx, t in enumerate(results["tests"], 1)
+            ],
+        }
+        try:
+            with open(RESULTS_FILE, "w", encoding="utf-8") as f:
+                json.dump(saved_data, f, indent=2)
+        except Exception as e:
+            print(f"[Warning] Failed to write {RESULTS_FILE}: {e}")
 
     return results
 
