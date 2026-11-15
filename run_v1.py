@@ -1,10 +1,13 @@
 """
-Standalone CLI and Streamlit Launcher for Version 1 (Baseline Pure-LLM).
+Launcher for Version 1 (Baseline Pure-LLM Escape Room).
+Preselects Version 1 in the Streamlit application.
 """
 
-import sys
 import os
+import sys
+import subprocess
 
 if __name__ == "__main__":
-    # If run via python directly, launch streamlit app pointing to v1 mode
-    os.system("streamlit run app.py")
+    os.environ["DEFAULT_ESCAPE_VERSION"] = "v1"
+    print("Launching AI Escape Room - Version 1 (Baseline Pure-LLM)...")
+    subprocess.run([sys.executable, "-m", "streamlit", "run", "app.py", "--", "--version", "v1"])

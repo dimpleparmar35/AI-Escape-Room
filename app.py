@@ -26,11 +26,28 @@ apply_custom_theme()
 st.sidebar.title("🗝️ AI Escape Room")
 st.sidebar.caption("Deep Learning & LLM Systems Portfolio")
 
+# Determine default version selection from environment variable or CLI argument
+default_ver = os.environ.get("DEFAULT_ESCAPE_VERSION", "").lower()
+if "--version" in sys.argv:
+    try:
+        v_idx = sys.argv.index("--version")
+        if v_idx + 1 < len(sys.argv):
+            default_ver = sys.argv[v_idx + 1].lower()
+    except Exception:
+        pass
+
+if default_ver in ["v1", "version1", "1"]:
+    default_radio_idx = 1
+elif default_ver in ["test", "tests", "benchmark"]:
+    default_radio_idx = 2
+else:
+    default_radio_idx = 0
+
 # Mode Selection
 app_mode = st.sidebar.radio(
     "Select System Version:",
     ["Version 2: Reliable (State-Validated)", "Version 1: Baseline (Pure LLM)", "Adversarial Test Suite"],
-    index=0,
+    index=default_radio_idx,
 )
 
 # Operational Mode & Model Configuration
