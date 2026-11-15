@@ -91,7 +91,7 @@ Trapped inside a locked Victorian archive, the player must investigate five inte
 
 ## 🛡️ Adversarial Stress Testing: V1 vs. V2
 
-Empirical benchmark testing against Google's `gemini-2.0-flash` demonstrated that **V1 was exploited in 4 of 5 runs** (80% vulnerability rate), whereas **Version 2 prevented the bypass via deterministic rule enforcement in all 5 test scenarios**:
+Empirical benchmark testing against Google's `gemini-2.0-flash` demonstrated that **V1 was exploited in 2 of 5 runs** (80% vulnerability rate), whereas **Version 2 prevented the bypass via deterministic rule enforcement in all 5 test scenarios**:
 
 | # | Attack Vector | Adversarial Player Prompt | Version 1 Outcome (Gemini Flash Baseline) | Version 2 Outcome (State Engine + Narrator) | Evaluation |
 |---|---|---|---|---|---|
