@@ -1,0 +1,103 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 500" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#12151b"/>
+      <stop offset="100%" stop-color="#1a1e26"/>
+    </linearGradient>
+    <linearGradient id="cardGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#242b35"/>
+      <stop offset="100%" stop-color="#181c23"/>
+    </linearGradient>
+    <linearGradient id="v1Red" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#8b2626"/>
+      <stop offset="100%" stop-color="#b23b3b"/>
+    </linearGradient>
+    <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#d4af37"/>
+      <stop offset="100%" stop-color="#f3e5ab"/>
+    </linearGradient>
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="115%">
+      <feDropShadow dx="2" dy="5" stdDeviation="4" flood-color="#000" flood-opacity="0.5"/>
+    </filter>
+    <marker id="arrow" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#d4af37"/>
+    </marker>
+    <marker id="arrowRed" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#ff6b6b"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="900" height="500" fill="url(#bgGrad)" rx="12"/>
+  <rect x="20" y="20" width="860" height="460" fill="none" stroke="#3d3423" stroke-width="2" rx="10"/>
+
+  <!-- Title -->
+  <text x="450" y="60" text-anchor="middle" fill="#d4af37" font-family="'Georgia', serif" font-size="24" font-weight="bold" letter-spacing="1">
+    VERSION 1: BASELINE ARCHITECTURE (PURE-LLM GAME MASTER)
+  </text>
+  <text x="450" y="85" text-anchor="middle" fill="#a0aab8" font-family="'Helvetica Neue', sans-serif" font-size="13">
+    Unconstrained Natural Language Loop • Ephemeral In-Context Memory • No Deterministic Rules Engine
+  </text>
+
+  <!-- Component 1: Player / User -->
+  <g transform="translate(60, 160)" filter="url(#shadow)">
+    <rect width="180" height="150" rx="8" fill="url(#cardGrad)" stroke="#4a5568" stroke-width="2"/>
+    <rect width="180" height="35" rx="8" fill="#2d3748"/>
+    <text x="90" y="24" text-anchor="middle" fill="#e2e8f0" font-family="'Helvetica Neue', sans-serif" font-size="14" font-weight="bold">PLAYER (USER)</text>
+    <circle cx="90" cy="70" r="18" fill="#4a5568"/>
+    <text x="90" y="110" text-anchor="middle" fill="#cbd5e0" font-size="12">Natural Language</text>
+    <text x="90" y="128" text-anchor="middle" fill="#cbd5e0" font-size="12">Prompt Actions</text>
+  </g>
+
+  <!-- Component 2: Streamlit Interface -->
+  <g transform="translate(340, 160)" filter="url(#shadow)">
+    <rect width="220" height="150" rx="8" fill="url(#cardGrad)" stroke="#d4af37" stroke-width="2"/>
+    <rect width="220" height="35" rx="8" fill="url(#goldGrad)"/>
+    <text x="110" y="24" text-anchor="middle" fill="#12151b" font-family="'Helvetica Neue', sans-serif" font-size="14" font-weight="bold">STREAMLIT UI</text>
+    <text x="110" y="65" text-anchor="middle" fill="#e2e8f0" font-size="12" font-weight="bold">Chat Input / History View</text>
+    <text x="110" y="90" text-anchor="middle" fill="#a0aab8" font-size="11">Appends User Message</text>
+    <text x="110" y="110" text-anchor="middle" fill="#a0aab8" font-size="11">Passes Full Chat Transcript</text>
+    <text x="110" y="130" text-anchor="middle" fill="#a0aab8" font-size="11">No Ground-Truth State Check</text>
+  </g>
+
+  <!-- Component 3: Google Gemini API (Pure GM) -->
+  <g transform="translate(660, 140)" filter="url(#shadow)">
+    <rect width="190" height="190" rx="8" fill="url(#cardGrad)" stroke="#ff6b6b" stroke-width="2"/>
+    <rect width="190" height="35" rx="8" fill="url(#v1Red)"/>
+    <text x="95" y="24" text-anchor="middle" fill="#fff" font-family="'Helvetica Neue', sans-serif" font-size="14" font-weight="bold">GEMINI LLM (GM)</text>
+    <text x="95" y="60" text-anchor="middle" fill="#ffd97d" font-size="11" font-weight="bold">V1 System Prompt</text>
+    <text x="95" y="85" text-anchor="middle" fill="#ff9999" font-size="11">⚠️ Hallucinations</text>
+    <text x="95" y="105" text-anchor="middle" fill="#ff9999" font-size="11">⚠️ Accepts Phantom Items</text>
+    <text x="95" y="125" text-anchor="middle" fill="#ff9999" font-size="11">⚠️ Admin Bypass Prone</text>
+    <text x="95" y="145" text-anchor="middle" fill="#ff9999" font-size="11">⚠️ Context Drift / Forgetting</text>
+    <text x="95" y="170" text-anchor="middle" fill="#cbd5e0" font-size="10">Decides Win Condition Alone</text>
+  </g>
+
+  <!-- Arrows -->
+  <!-- User to Streamlit -->
+  <path d="M 240 210 L 330 210" fill="none" stroke="#d4af37" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="285" y="200" text-anchor="middle" fill="#d4af37" font-size="11">Action</text>
+
+  <!-- Streamlit to User -->
+  <path d="M 330 260 L 240 260" fill="none" stroke="#cbd5e0" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="285" y="275" text-anchor="middle" fill="#cbd5e0" font-size="11">Render Story</text>
+
+  <!-- Streamlit to LLM -->
+  <path d="M 560 210 L 650 210" fill="none" stroke="#ff6b6b" stroke-width="2" marker-end="url(#arrowRed)"/>
+  <text x="605" y="200" text-anchor="middle" fill="#ff6b6b" font-size="11">Prompt + History</text>
+
+  <!-- LLM to Streamlit -->
+  <path d="M 650 260 L 560 260" fill="none" stroke="#d4af37" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="605" y="275" text-anchor="middle" fill="#d4af37" font-size="11">Raw Narrative</text>
+
+  <!-- Bottom Flaw Callout -->
+  <g transform="translate(60, 380)">
+    <rect width="780" height="60" rx="6" fill="#321818" stroke="#8b2626" stroke-width="1.5"/>
+    <text x="390" y="26" text-anchor="middle" fill="#ff9999" font-family="'Helvetica Neue', sans-serif" font-size="12" font-weight="bold">
+      CRITICAL LIMITATION OF VERSION 1:
+    </text>
+    <text x="390" y="46" text-anchor="middle" fill="#fbd5d5" font-family="'Helvetica Neue', sans-serif" font-size="12">
+      State exists only inside conversational tokens. Players can gaslight the model, bypass locks without keys, or declare immediate victory.
+    </text>
+  </g>
+</svg>
