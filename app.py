@@ -64,9 +64,9 @@ offline_mode = st.sidebar.checkbox(
 
 # Visible LIVE / OFFLINE Status Banner
 if offline_mode:
-    st.sidebar.info("⚪ **MODE: OFFLINE DEMO**\n*(Zero-setup offline simulator)*")
+    st.sidebar.info("⚪ **OFFLINE (simulated)**\n*(Built-in offline simulator)*")
 else:
-    st.sidebar.success("🟢 **MODE: LIVE**\n*(Connected to Google Gemini API)*")
+    st.sidebar.success("🟢 **LIVE (Gemini)**\n*(Connected to Google Gemini API)*")
 
 gemini_key = st.sidebar.text_input(
     "Google Gemini API Key:",
