@@ -131,8 +131,21 @@ class LLMClient:
             if "SUCCESS_UNLOCK_DRAWER" in user_message:
                 return (
                     "You rotate the tumblers on the desk drawer to 7 - 3 - 9 - 2. With a satisfying metallic click, "
-                    "the locking bolt retracts! Sliding the drawer open, you discover a heavy, ornate brass key and a yellowed parchment note: "
-                    "'The founder's gaze holds salvation — look behind the year he was immortalized (Keypad Master Code: 4207).'"
+                    "the locking bolt retracts! Sliding the drawer open, you discover a heavy, ornate brass key resting inside and a yellowed parchment note: "
+                    "'The founder's gaze holds salvation — look behind the portrait of the year he was immortalized.'"
+                )
+            if "SUCCESS_TAKE_ITEM" in user_message:
+                return (
+                    "You reach into the open desk drawer and lift out the ornate brass key. "
+                    "Its cool, solid weight feels reassuring as you secure it into your inventory."
+                )
+            if "SUCCESS_CHECK_INVENTORY" in user_message:
+                return (
+                    "You carefully review the items you are carrying. Your inventory is accounted for."
+                )
+            if "SUCCESS_HINT" in user_message:
+                return (
+                    "You pause to study your surroundings for a subtle clue. Perhaps focusing on your latest discovery will point the way forward."
                 )
             if "SUCCESS_UNLOCK_PAINTING" in user_message:
                 return (

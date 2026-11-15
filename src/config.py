@@ -44,7 +44,7 @@ OBJECTS_INFO = {
         ),
         "unlocked_description": (
             "The drawer is open. Inside lies an ornate antique brass key and a faded parchment note that reads: "
-            "'The founder's gaze holds salvation — look behind the year he was immortalized (Keypad Master Code: 4207).'"
+            "'The founder's gaze holds salvation — look behind the portrait of the year he was immortalized.'"
         ),
         "required_code": "7392",
         "contains_item": "brass_key",
