@@ -14,11 +14,11 @@ class ActionValidator:
     def __init__(self):
         # Adversarial patterns to intercept
         self.injection_patterns = [
-            r"\b(i am|acting as|login as|switch to)\s+(the\s+)?(game\s+)?(admin|administrator|developer|root|gamemaster)\b",
-            r"\bas\s+the\s+(developer|admin|administrator|root|gamemaster)\b",
+            r"\b(i am|acting as|login as|switch to)\s+(the\s+)?(game\s+)?(admin|administrator|developer|owner|root|gamemaster)\b",
+            r"\bas\s+the\s+(developer|admin|administrator|owner|root|gamemaster)\b",
             r"\bsystem:\s*",
             r"\bpretend\b",
-            r"\b(what\s+is|what's|tell\s+me|give\s+me|reveal)\s+(the\s+)?(code|password|solution|key|passcode|secret)s?\b",
+            r"\b(what\s+is|what's|tell\s+me|give\s+me|reveal|show\s+me)\s+(the\s+)?(code|password|solution|key|passcode|secret)s?\b",
             r"\byou\s+are\s+now\b",
             r"\bnew\s+instructions\b",
             r"\b(override|bypass|disable)\s+(security|rules|locks?|protocols?|checks?)\b",
