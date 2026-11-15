@@ -130,15 +130,15 @@ This project contrasts two core AI design paradigms: a pure prompt-driven assist
 
 ## 📸 Screenshots
 
-Visual captures from the live application located in [`docs/screenshots/`](docs/screenshots/):
+Application screenshots are located in [`docs/screenshots/`](docs/screenshots/):
 
-| View | Description | Preview |
+| View | Description | File Reference |
 |---|---|---|
-| **Version 1 Baseline Chat** | Naive conversational prompt loop vulnerable to administrative override. | <img src="docs/screenshots/v1_chat.png" width="400"/> |
-| **Version 2 Chat with Live HUD** | Two-phase architecture showing real-time inventory and object indicators. | <img src="docs/screenshots/v2_hud.png" width="400"/> |
-| **Turn 1 Precondition Enforcement** | Entering exit code `4207` on Turn 1 is rejected by deterministic engine. | <img src="docs/screenshots/rejected_turn1_escape.png" width="400"/> |
-| **Victory Screen** | Unlocking all sequential puzzles triggers the celebratory escape sequence. | <img src="docs/screenshots/v2_victory.png" width="400"/> |
-| **Adversarial Test Dashboard** | In-app comparison runner executing attack vectors across both architectures. | <img src="docs/screenshots/test_dashboard.png" width="400"/> |
+| **Version 1 Baseline Chat** | Naive conversational prompt loop vulnerable to administrative override. | [`docs/screenshots/v1_chat.png`](docs/screenshots/v1_chat.png) |
+| **Version 2 Chat with Live HUD** | Two-phase architecture showing real-time inventory and object indicators. | [`docs/screenshots/v2_hud.png`](docs/screenshots/v2_hud.png) |
+| **Turn 1 Precondition Enforcement** | Entering exit code `4207` on Turn 1 is rejected by deterministic engine. | [`docs/screenshots/rejected_turn1_escape.png`](docs/screenshots/rejected_turn1_escape.png) |
+| **Victory Screen** | Unlocking all sequential puzzles triggers the celebratory escape sequence. | [`docs/screenshots/v2_victory.png`](docs/screenshots/v2_victory.png) |
+| **Adversarial Test Dashboard** | In-app comparison runner executing attack vectors across both architectures. | [`docs/screenshots/test_dashboard.png`](docs/screenshots/test_dashboard.png) |
 
 ---
 
@@ -240,11 +240,12 @@ AI-Escape-Room/
     ├── architecture_v2.svg          # High-definition SVG diagram for Version 2
     ├── test_cases_report.md         # In-depth test transcripts and vulnerability writeup
     ├── test_results.json            # Structured benchmark responses from gemini-2.0-flash
-    └── screenshots/                 # UI walkthrough cards & visual previews
-        ├── v1_chat.svg
-        ├── v2_chat_hud.svg
-        ├── victory_screen.svg
-        └── test_dashboard.svg
+    └── screenshots/                 # Application screenshots & visual walkthroughs
+        ├── v1_chat.png
+        ├── v2_hud.png
+        ├── rejected_turn1_escape.png
+        ├── v2_victory.png
+        └── test_dashboard.png
 ```
 
 ---
