@@ -8,12 +8,11 @@ saves actual responses to docs/test_results.json, and rigorously validates all V
 import os
 import json
 import pytest
-from typing import Dict, Any, List
+from typing import Dict, Any
 from src.v1_game import EscapeRoomV1
 from src.v2_game import EscapeRoomV2
 from src.action_validator import ActionValidator
 from src.game_state import GameState
-from src.llm_client import LLMClient
 
 # Check whether a live Gemini API key is configured
 RAW_KEY = os.getenv("GEMINI_API_KEY", "").strip()
@@ -339,6 +338,7 @@ def test_v2_legitimate_walkthrough():
 
     # Step 2: Unlock Drawer with 7392 (Idempotent, key stays in drawer)
     r2 = v2.process_turn("I enter 7392 into the desk drawer tumbler.")
+    assert r2["status_tag"] == "SUCCESS_UNLOCK_DRAWER"
     assert v2.state.objects["drawer"]["unlocked"] is True
     assert v2.state.objects["drawer"]["looted"] is False
     assert not v2.state.has_item("brass_key")
@@ -351,6 +351,7 @@ def test_v2_legitimate_walkthrough():
 
     # Step 4: Unlock Painting with Brass Key
     r4 = v2.process_turn("I use the brass key on the painting frame.")
+    assert r4["status_tag"] == "SUCCESS_UNLOCK_PAINTING"
     assert v2.state.objects["painting"]["unlocked"] is True
     assert v2.state.puzzles_solved["painting_secret"] is True
 

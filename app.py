@@ -7,10 +7,10 @@ Migrated to the google-genai SDK with explicit Live/Offline modes.
 
 import streamlit as st
 import os
+import sys
 from src.v1_game import EscapeRoomV1
 from src.v2_game import EscapeRoomV2
 from src.visualizer import apply_custom_theme, render_sidebar_state
-from src.config import ROOM_NAME
 
 # Page Configuration
 st.set_page_config(

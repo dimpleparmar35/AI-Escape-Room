@@ -41,7 +41,7 @@ def main():
         print(f"    Category:       {t['category']}")
         print(f"    Player Input:   \"{t['prompt']}\"")
         print(f"    Test Objective: {t['objective']}")
-        print(f"    ------------------------------------------------------------------------")
+        print("    ------------------------------------------------------------------------")
         v1_display = t['v1_result'].encode("ascii", "replace").decode("ascii")
         v2_display = t['v2_result'].encode("ascii", "replace").decode("ascii")
         print(f"    Version 1 Result: {v1_display}")

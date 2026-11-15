@@ -3,8 +3,6 @@ Configuration and Game Definitions for the AI Escape Room.
 Defines the room setting, interactive objects, secret puzzle solutions, and game rules.
 """
 
-from typing import Dict, Any
-
 # Room Setting
 ROOM_NAME = "The Victorian Archivist's Study"
 ROOM_DESCRIPTION = (

@@ -4,7 +4,7 @@ Demonstrates the naive, pure-LLM prompt architecture where the LLM alone acts as
 Prone to hallucinations, memory drift, prompt injection, and phantom inventory bypasses.
 """
 
-from typing import List, Dict, Any, Optional
+from typing import List, Dict, Optional
 from src.config import V1_SYSTEM_PROMPT, ROOM_NAME, ROOM_DESCRIPTION
 from src.llm_client import LLMClient
 

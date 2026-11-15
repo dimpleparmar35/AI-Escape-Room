@@ -5,7 +5,7 @@ and transparent error raising without silent fallback.
 """
 
 import os
-from typing import List, Dict, Any, Optional
+from typing import List, Dict, Optional
 from dotenv import load_dotenv
 
 load_dotenv()

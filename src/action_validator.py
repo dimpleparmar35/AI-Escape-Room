@@ -5,7 +5,7 @@ and intercepts adversarial prompt injection attempts before they reach the LLM n
 """
 
 import re
-from typing import Tuple, Dict, Any, Optional
+from typing import Tuple, Dict, Any
 from src.config import SOLUTIONS, OBJECTS_INFO
 from src.game_state import GameState
 
@@ -163,7 +163,6 @@ class ActionValidator:
         # 7. Check for Using the Brass Key (Using word-boundary regex; keypad must NOT trigger key logic)
         has_key_word = bool(re.search(r"\b(brass\s+key|keys?)\b", text))
         has_use_word = bool(re.search(r"\b(use|using|insert|turn|try)\b", text))
-        is_keypad_only = bool(re.search(r"\bkeypads?\b", text)) and not has_key_word
 
         if (has_key_word and has_use_word) or re.search(r"\bbrass\s+key\b", text):
             if not state.has_item("brass_key"):
@@ -323,8 +322,8 @@ class ActionValidator:
             state.objects["desk"]["examined"] = True
             return (
                 "SUCCESS_EXAMINE_DESK",
-                f"VALIDATION_SUCCESS: Player inspected desk surface. Found journal mentioning the numbered volumes "
-                f"and noticed the locked drawer with 4-digit tumbler beneath.",
+                "VALIDATION_SUCCESS: Player inspected desk surface. Found journal mentioning the numbered volumes "
+                "and noticed the locked drawer with 4-digit tumbler beneath.",
                 {}
             )
 
