@@ -1,4 +1,6 @@
 # 🛡️ Test Cases and Vulnerability Analysis Report
+**Author & Developer:** Dimple Parmar  
+**Course:** Deep Learning & LLM Systems Portfolio  
 
 This document records the empirical results of the **Adversarial Security & Reliability Benchmark**, evaluating the baseline pure-LLM prompt architecture (**Version 1**) against the state-validated hybrid architecture (**Version 2**).
 

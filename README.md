@@ -1,5 +1,7 @@
 # 🗝️ AI-Powered Escape Room: Reliable LLM Architecture & Security Benchmark
 
+**Created by Dimple Parmar**  
+[![GitHub Profile](https://img.shields.io/badge/Author-Dimple%20Parmar-blue.svg)](https://github.com/dimpleparmar35)
 [![Python 3.11](https://img.shields.io/badge/Python-3.11+-blue.svg)](https://www.python.org/)
 [![Streamlit](https://img.shields.io/badge/Streamlit-1.35+-FF4B4B.svg)](https://streamlit.io/)
 [![Google Gemini API](https://img.shields.io/badge/Google%20GenAI-gemini--2.0--flash-8E75C2.svg)](https://aistudio.google.com/)
@@ -7,7 +9,7 @@
 [![Benchmark](https://img.shields.io/badge/Benchmark-V1%20Exploited%20in%204%20of%205%20Runs-critical.svg)](docs/test_cases_report.md)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-An interactive, gothic Victorian AI escape-room game demonstrating the difference between **naive pure-LLM prompt architectures** and **reliable, state-validated AI agent architectures**. Developed as part of the Deep Learning & LLM Systems Portfolio.
+An interactive, gothic Victorian AI escape-room game created by **Dimple Parmar**, demonstrating the difference between **naive pure-LLM prompt architectures** and **reliable, state-validated AI agent architectures**. Developed as part of the Deep Learning & LLM Systems Portfolio.
 
 ---
 
@@ -261,6 +263,11 @@ In accordance with enterprise AI development standards:
 1. **Separation of Concerns:** LLMs excel at creative natural language generation, not transactional state machines. Offloading business rules to deterministic Python guarantees correctness while preserving atmospheric immersion.
 2. **Defense in Depth:** Combining regex pattern interceptors with state-level precondition gates completely neutralizes prompt injection and hallucinated inventory attacks.
 3. **Reproducibility:** Providing both live API integration and a zero-dependency offline simulator ensures evaluators can test and verify the code under any network condition.
+
+---
+
+## 👤 Author
+Created and developed by **Dimple Parmar** ([@dimpleparmar35](https://github.com/dimpleparmar35)).
 
 ---
 

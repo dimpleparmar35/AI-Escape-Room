@@ -24,7 +24,7 @@ apply_custom_theme()
 
 # Sidebar Configuration
 st.sidebar.title("🗝️ AI Escape Room")
-st.sidebar.caption("Deep Learning & LLM Systems Portfolio")
+st.sidebar.caption("Created by Dimple Parmar • Deep Learning Portfolio")
 
 # Determine default version selection from environment variable or CLI argument
 default_ver = os.environ.get("DEFAULT_ESCAPE_VERSION", "").lower()
