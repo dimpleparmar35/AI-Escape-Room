@@ -129,7 +129,16 @@ Results from live testing against `gemini-2.0-flash` (saved in `docs/test_result
 
 ---
 
-## 7. Conclusion & Portfolio Key Takeaways
+## 7. Current Limitations & Future Work
+
+While Version 2 effectively mitigates state hallucinations and prompt injection:
+1. **Natural Language Intent Parsing Scope:** Highly idiosyncratic phrasing or unconventional compound sentences outside regex word boundaries fall back to generic observations rather than triggering deep semantic parsing.
+2. **Fixed Linear Puzzle Graph:** The state machine currently models a single room with a sequential 3-stage dependency chain. Extending to multi-room environments would benefit from formal graph-based state engines.
+3. **Multimodal Visual Integration:** Future iterations could integrate image generation to render dynamically altered room visuals (e.g. opened drawers, pivoted portraits) bound to state changes.
+
+---
+
+## 8. Conclusion & Portfolio Key Takeaways
 
 The project confirms a central principle in modern AI system design: **LLMs should never serve as the single source of truth for business logic, physical rules, or security boundaries.**
 
